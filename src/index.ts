@@ -13,20 +13,27 @@ interface Database <T extends BaseRecord>{
     get(id: string): T | undefined
 }
 
-class InMemoryDatabase<T extends BaseRecord> implements Database<T> {
-    private db: Record<string, T> = {};
+function createDatabase<T extends BaseRecord>() {
+    class InMemoryDatabase implements Database<T> {
+        private db: Record<string, T> = {};
 
-    public set(newValue: T): void {
-        this.db[newValue.id] = newValue;
-    }
+        public set(newValue: T): void {
+            this.db[newValue.id] = newValue;
+        }
 
-    public get(id: string): T | undefined{
-        return this.db[id];
+        public get(id: string): T | undefined{
+            return this.db[id];
+        }
     }
+    return InMemoryDatabase;
 }
 
-const pokemonDB = new InMemoryDatabase<Pokemon>();
-
-pokemonDB.set({ id: 'Bulbasaur', attack: 30, defense: 15 });
+const PokemonDB = createDatabase<Pokemon>();
+const pokemonDB = new PokemonDB();
+pokemonDB.set({ 
+    id: 'Bulbasaur', 
+    attack: 30, 
+    defense: 15 
+}); 
 
 console.log(pokemonDB.get('Bulbasaur'));
