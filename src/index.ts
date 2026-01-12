@@ -13,9 +13,17 @@ interface Database <T extends BaseRecord>{
     get(id: string): T | undefined
 }
 
+// Factory pattern
+
 function createDatabase<T extends BaseRecord>() {
     class InMemoryDatabase implements Database<T> {
         private db: Record<string, T> = {};
+
+        // Singleton pattern
+
+        static instance: InMemoryDatabase = new InMemoryDatabase();
+
+        private constructor() {}
 
         public set(newValue: T): void {
             this.db[newValue.id] = newValue;
@@ -25,15 +33,15 @@ function createDatabase<T extends BaseRecord>() {
             return this.db[id];
         }
     }
+
     return InMemoryDatabase;
 }
 
-const PokemonDB = createDatabase<Pokemon>();
-const pokemonDB = new PokemonDB();
-pokemonDB.set({ 
+const pokemonDB = createDatabase<Pokemon>();
+pokemonDB.instance.set({ 
     id: 'Bulbasaur', 
     attack: 30, 
     defense: 15 
 }); 
 
-console.log(pokemonDB.get('Bulbasaur'));
+console.log(pokemonDB.instance.get('Bulbasaur'));
